@@ -111,16 +111,15 @@ registerRoute('landing', (root) => {
         <p style="text-align:center;color:var(--text-m);max-width:600px;margin:0 auto 48px">SmartStock is a DBMS project developed at Thapar Institute of Engineering & Technology, Patiala. It emerged from a real need — helping Indian kirana stores compete with e-commerce delivery apps.</p>
         <div class="team-grid">
           ${[
-            ['Ishant Mehndiratta','1024030525','Lead Developer & Architect','Designed the complete database schema, PL/SQL triggers, stored procedures, and system architecture. Spearheaded backend integration and concurrency control mechanisms.','🎓'],
-            ['Satyam Tiwari','1024030088','Backend Developer','Implemented SQL analytics queries, views, normalization logic, and the billing & checkout workflow. Led the ACID compliance and transaction management layer.','💻'],
-            ['Anshaj Kumar','1024030494','Frontend & Integration','Developed the web interface, role-based dashboards, and real-time connectivity between cashier billing and customer portal. Handled UI/UX design.','🎨'],
-          ].map(([name,roll,role,desc,icon]) => `
+            ['Ishant Mehndiratta','1024030525','Designed the complete database schema, PL/SQL triggers, stored procedures, and system architecture. Spearheaded backend integration and concurrency control mechanisms.','🎓'],
+            ['Satyam Tiwari','1024030088','Implemented SQL analytics queries, views, normalization logic, and the billing & checkout workflow. Led the ACID compliance and transaction management layer.','💻'],
+            ['Anshaj','1024030494','Developed the role-based dashboards, integrated the web interface with complex SQL views, and ensured proper mapping of business logic to relational database structures.','🎨'],
+          ].map(([name,roll,desc,icon]) => `
             <div class="team-card">
               <div class="team-avatar">${icon}</div>
               <div class="team-info">
                 <h3>${name}</h3>
                 <div class="team-roll">Roll: ${roll}</div>
-                <div class="team-role">${role}</div>
                 <p>${desc}</p>
               </div>
             </div>`).join('')}
@@ -140,9 +139,9 @@ registerRoute('landing', (root) => {
         <h2 class="section-title">Get in touch</h2>
         <p style="color:var(--text-m);margin-bottom:40px">Have questions about deployment or want to contribute? Reach out.</p>
         <div class="contact-grid">
-          <div class="contact-item"><span class="contact-icon">📧</span><span>ishant@smartstock.in</span></div>
+          <div class="contact-item"><span class="contact-icon">📧</span><span>imehndiratta_be24@thapar.edu</span></div>
           <div class="contact-item"><span class="contact-icon">📍</span><span>TIET Patiala, Punjab</span></div>
-          <div class="contact-item"><span class="contact-icon">🔗</span><span>github.com/smartstock-tiet</span></div>
+          <div class="contact-item"><span class="contact-icon">🔗</span><a href="https://github.com/ISHANT-M/smartstock" target="_blank" style="color: inherit; text-decoration: none;">github.com/ISHANT-M/smartstock</a></div>
         </div>
       </div>
     </section>
