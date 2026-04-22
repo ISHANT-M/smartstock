@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment / secrets
+.env
+.env.*
+
+# OS metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# R (irrelevant)
+.Rhistory
+.RData
+
+# Test artifacts
+test-api.js
+test-api.ps1

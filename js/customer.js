@@ -106,9 +106,12 @@ registerRoute('customer-orders', async (root) => {
   ${buildSidebar('customer-orders')}
   <div class="with-sidebar page">
     <div class="page-header">
-      <div>
-        <div class="page-title">🧾 My Purchases</div>
-        <div class="page-sub">Complete purchase history</div>
+      <div style="display:flex;gap:16px;align-items:center">
+        <button class="btn btn-ghost btn-icon" onclick="navigateTo('customer-home')" title="Back to Home">←</button>
+        <div>
+          <div class="page-title">🧾 My Purchases</div>
+          <div class="page-sub">Complete purchase history</div>
+        </div>
       </div>
     </div>
     <div class="page-body">

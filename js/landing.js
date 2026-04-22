@@ -191,9 +191,13 @@ registerRoute('login', (root) => {
     </div>
     <div class="login-right">
       <div class="login-box">
-        <button class="btn btn-ghost btn-icon" onclick="navigateTo('landing')" style="margin-bottom:20px">←</button>
-        <h2 style="margin-bottom:6px">Welcome back</h2>
-        <p class="text-muted mb-24">Sign in to your SmartStock account</p>
+        <div style="display:flex;gap:16px;align-items:center;margin-bottom:24px">
+          <button class="btn btn-ghost btn-icon" onclick="navigateTo('landing')" title="Back">←</button>
+          <div>
+            <h2 style="margin:0;margin-bottom:4px">Welcome back</h2>
+            <p class="text-muted" style="margin:0">Sign in to your SmartStock account</p>
+          </div>
+        </div>
 
         <div class="role-select-row">
           <button class="role-btn active" data-role="admin" onclick="selectRole(this,'admin')">👑<span>Owner</span></button>
@@ -284,9 +288,13 @@ registerRoute('register', (root) => {
     </div>
     <div class="login-right">
       <div class="login-box">
-        <button class="btn btn-ghost btn-icon" onclick="navigateTo('login')" style="margin-bottom:20px">←</button>
-        <h2 style="margin-bottom:6px">New Customer</h2>
-        <p class="text-muted mb-24">Create your SmartStock account</p>
+        <div style="display:flex;gap:16px;align-items:center;margin-bottom:24px">
+          <button class="btn btn-ghost btn-icon" onclick="navigateTo('login')" title="Back to Login">←</button>
+          <div>
+            <h2 style="margin:0;margin-bottom:4px">New Customer</h2>
+            <p class="text-muted" style="margin:0">Create your SmartStock account</p>
+          </div>
+        </div>
         <div class="form-group mb-12">
           <label class="form-label">Full Name *</label>
           <input class="form-input" id="reg-name" type="text" placeholder="Your full name" />

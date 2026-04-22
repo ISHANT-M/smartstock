@@ -119,9 +119,12 @@ registerRoute('products', async (root) => {
   ${buildSidebar('products')}
   <div class="with-sidebar page">
     <div class="page-header">
-      <div>
-        <div class="page-title">📦 Products</div>
-        <div class="page-sub">Manage inventory and stock</div>
+      <div style="display:flex;gap:16px;align-items:center">
+        <button class="btn btn-ghost btn-icon" onclick="navigateTo('dashboard')" title="Back to Dashboard">←</button>
+        <div>
+          <div class="page-title">📦 Products</div>
+          <div class="page-sub">Manage inventory and stock</div>
+        </div>
       </div>
       <div class="flex gap-12">
         <div class="search-bar">
@@ -410,9 +413,12 @@ registerRoute('analytics', async (root) => {
   ${buildSidebar('analytics')}
   <div class="with-sidebar page">
     <div class="page-header">
-      <div>
-        <div class="page-title">📈 Analytics</div>
-        <div class="page-sub">Sales performance & inventory insights</div>
+      <div style="display:flex;gap:16px;align-items:center">
+        <button class="btn btn-ghost btn-icon" onclick="navigateTo('dashboard')" title="Back to Dashboard">←</button>
+        <div>
+          <div class="page-title">📈 Analytics</div>
+          <div class="page-sub">Sales performance & inventory insights</div>
+        </div>
       </div>
     </div>
     <div class="page-body">
@@ -510,7 +516,10 @@ registerRoute('notifications', async (root) => {
   ${buildSidebar('notifications')}
   <div class="with-sidebar page">
     <div class="page-header">
-      <div><div class="page-title">🔔 Alerts</div><div class="page-sub">System notifications and warnings</div></div>
+      <div style="display:flex;gap:16px;align-items:center">
+        <button class="btn btn-ghost btn-icon" onclick="navigateTo('dashboard')" title="Back to Dashboard">←</button>
+        <div><div class="page-title">🔔 Alerts</div><div class="page-sub">System notifications and warnings</div></div>
+      </div>
       <button class="btn btn-ghost" onclick="loadNotifications()">↻ Refresh</button>
     </div>
     <div class="page-body">
@@ -559,7 +568,10 @@ registerRoute('users', async (root) => {
   ${buildSidebar('users')}
   <div class="with-sidebar page">
     <div class="page-header">
-      <div><div class="page-title">👥 Users</div><div class="page-sub">Manage all system users</div></div>
+      <div style="display:flex;gap:16px;align-items:center">
+        <button class="btn btn-ghost btn-icon" onclick="navigateTo('dashboard')" title="Back to Dashboard">←</button>
+        <div><div class="page-title">👥 Users</div><div class="page-sub">Manage all system users</div></div>
+      </div>
       <button class="btn btn-primary" onclick="openAddUser()">+ Add User</button>
     </div>
     <div class="page-body">

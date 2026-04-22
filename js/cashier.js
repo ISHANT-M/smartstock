@@ -397,9 +397,12 @@ registerRoute('orders', async (root) => {
   ${buildSidebar('orders')}
   <div class="with-sidebar page">
     <div class="page-header">
-      <div>
-        <div class="page-title">🧾 Orders</div>
-        <div class="page-sub">All completed bills</div>
+      <div style="display:flex;gap:16px;align-items:center">
+        <button class="btn btn-ghost btn-icon" onclick="navigateTo(State.user.role === 'cashier' ? 'billing' : State.user.role === 'customer' ? 'customer-home' : 'dashboard')" title="Back">←</button>
+        <div>
+          <div class="page-title">🧾 Orders</div>
+          <div class="page-sub">All completed bills</div>
+        </div>
       </div>
     </div>
     <div class="page-body">
