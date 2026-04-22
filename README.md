@@ -7,59 +7,78 @@
 
 ---
 
-## 🚀 Quick Setup (5 Minutes)
+## 🚀 Comprehensive Setup Guide
 
 ### Prerequisites
 - **Node.js** v18+ → https://nodejs.org
-- **MySQL** (free options below)
+- **MySQL Server** (Local or Cloud)
 
-### Step 1 — Get MySQL (Free)
+### Step 1 — Get MySQL (Local or Cloud)
 
-**Option A: Local (easiest for dev)**
+**Option A: Local Development (Recommended)**
+1. Download & Install [MySQL Community Server](https://dev.mysql.com/downloads/mysql/) or use [XAMPP](https://www.apachefriends.org).
+2. Start the MySQL Server service.
+3. Keep your `root` password handy.
+
+**Option B: Free Cloud Hosting (No installation required)**
+- **PlanetScale** / **Railway** / **Aiven** / **db4free.net**
+- Create a database and get your host, user, password, and port.
+
+### Step 2 — Initialize the Database
+1. Open your MySQL client (MySQL Workbench, DBeaver, or CLI).
+2. Connect to your MySQL server using your root credentials.
+3. Execute the provided schema file to create the database, tables, views, procedures, and insert seed data:
+
+**Using Bash / macOS / Linux:**
 ```bash
-# Install MySQL Community Server (free) from:
-# https://dev.mysql.com/downloads/mysql/
-# OR use XAMPP: https://www.apachefriends.org
+mysql -u root -p < /path/to/smartstock/schema.sql
 ```
 
-**Option B: Free Cloud (for hosting)**
-- **PlanetScale** (free tier): https://planetscale.com
-- **Railway** (free MySQL): https://railway.app
-- **Aiven** (free tier): https://aiven.io
-- **db4free.net** (free MySQL): https://www.db4free.net
-
-### Step 2 — Set Up Database
-```sql
--- In MySQL Workbench or CLI:
-source /path/to/smartstock/schema.sql
+**Using CMD (Windows):**
+```cmd
+mysql -u root -p < schema.sql
 ```
 
-### Step 3 — Configure Environment
+**Using PowerShell (Windows):**
+```powershell
+Get-Content .\schema.sql | mysql -u root -p
+```
+*Alternatively, in MySQL Workbench: File -> Run SQL Script... -> select `schema.sql`.*
+
+### Step 3 — Configure Environment Variables
+1. Copy the example environment file:
+
+**Using Bash / macOS / Linux:**
 ```bash
-# Copy and edit environment variables
 cp .env.example .env
-# Edit .env with your MySQL credentials
 ```
 
-Create `.env` file:
+**Using CMD / PowerShell (Windows):**
+```cmd
+copy .env.example .env
 ```
-DB_HOST=localhost
-DB_USER=root
-DB_PASS=yourpassword
+2. Edit `.env` with your correct database credentials (leave DB_PASS and JWT_SECRET empty if not using them):
+```env
+DB_HOST=localhost       # Or your cloud DB host
+DB_USER=root            # Your MySQL username
+DB_PASS=                # Your MySQL password (leave blank if none)
 DB_NAME=smartstock
-JWT_SECRET=your_secret_key_here
+JWT_SECRET=             # Your JWT Secret (leave blank if none)
 PORT=3000
 ```
 
-### Step 4 — Install & Run
+### Step 4 — Install Dependencies & Run
 ```bash
+# Install required Node.js packages (Express, MySQL2, etc.)
 npm install
-npm start
-# Server starts at http://localhost:3000
+
+# Start the application in development mode
+npm run dev
+# OR use: npm start
 ```
 
-### Step 5 — Open App
-Open your browser: **http://localhost:3000**
+### Step 5 — Access the Application
+Open your web browser and navigate to: **http://localhost:3000**
 
 ---
 
@@ -97,42 +116,54 @@ smartstock/
 
 ---
 
-## 🗄 Database Design
+## 🗄 Database Management System (DBMS) Concepts Implemented
 
-### Tables
-| Table | Purpose |
-|-------|---------|
-| `USER` | All roles: admin, manager, cashier, customer |
-| `PRODUCT` | SKUs with expiry, price, stock, warning labels |
-| `CATEGORY` | Product categories (normalized, 3NF) |
-| `ORDERS` | Bill headers with GST, discount, totals |
-| `ORDER_ITEMS` | Line items (price snapshot preserved — 2NF compliant) |
-| `STOCK_LOG` | Full audit trail for every stock movement |
-| `DISCOUNT_RULES` | Configurable discount rules |
-| `NOTIFICATION` | Auto-generated alerts for low stock & expiry |
+The database architecture of Smart-Stock has been meticulously designed following fundamental DBMS principles to ensure data integrity, optimal performance, and robustness.
 
-### Views
-- `vw_cashier_products` — Non-expired, in-stock products for billing
-- `vw_daily_summary` — Today's sales KPIs
-- `vw_expiry_alerts` — Items expiring within 30 days
-- `vw_product_sales_summary` — Revenue per product
-- `vw_highest_ticket_items` — Top items by revenue
-- `vw_customer_history` — Full customer purchase history
+### 1. Normalization (Achieved up to 3rd Normal Form - 3NF)
+The schema has been normalized to eliminate data redundancy and prevent insertion, update, and deletion anomalies.
+- **First Normal Form (1NF):** Every table has a primary key (`product_id`, `user_id`, etc.). All attributes contain atomic, indivisible values. E.g., the `warning_label` in `PRODUCT` stores a single distinct value, and there are no repeating groups.
+- **Second Normal Form (2NF):** The schema meets 1NF, and all non-key attributes are fully functionally dependent on the entire primary key. In `ORDER_ITEMS`, the `unit_price` is stored as a snapshot to capture the product's price at the exact moment of sale. This preserves historical integrity without violating normalization.
+- **Third Normal Form (3NF):** The schema meets 2NF, and all transitive dependencies have been removed. For example, instead of storing `category_name` directly in the `PRODUCT` table (which introduces `product_id → category_id → category_name`), we abstracted it into a separate `CATEGORY` table linked via the `category_id` foreign key.
 
-### Triggers
-- `trg_block_expired_product` — BEFORE INSERT on ORDER_ITEMS: blocks expired product sales
-- `trg_low_stock_alert` — AFTER UPDATE on PRODUCT: creates notification when stock hits reorder level
-- `trg_product_create_log` — Logs initial stock on product creation
-- `trg_expiry_warning` — Creates alert for products expiring within 30 days
+### 2. ACID Properties & Transactions
+The system strictly enforces ACID properties, particularly during critical operations like billing.
+- **Atomicity:** Operations that modify multiple tables (like checkout) are enclosed within `START TRANSACTION` and `COMMIT` blocks (see `sp_checkout`). If a product is out of stock mid-transaction, a `ROLLBACK` is issued.
+- **Consistency:** Constraints (`CHECK (price >= 0)`, `CHECK (stock_qty >= 0)`) enforce domain integrity. Triggers ensure business rules are maintained automatically (e.g., preventing the sale of expired products).
+- **Isolation:** Transactional concurrency is managed using row-level locking. The `SELECT ... FOR UPDATE` clause in `sp_checkout` prevents race conditions, ensuring two cashiers cannot double-sell the last unit.
+- **Durability:** Changes are persisted permanently using the MySQL InnoDB storage engine's write-ahead logging (WAL).
 
-### Stored Procedures
-- `sp_checkout()` — Full atomic checkout: validates, creates order, deducts stock, rollback on error
-- `sp_restock_product()` — Restock with audit log
-- `sp_register_customer()` — Safe customer registration
-- `sp_analytics_report()` — Revenue report by date range
+### 3. Constraints and Data Integrity
+- **Entity Integrity:** Implemented using `PRIMARY KEY` with `AUTO_INCREMENT`.
+- **Referential Integrity:** Implemented using `FOREIGN KEY` constraints (e.g., linking `ORDERS` to `USER`). `ON DELETE CASCADE` is applied where appropriate (e.g., `ORDER_ITEMS`).
+- **Domain/Semantic Integrity:** Enforced using `CHECK` constraints (e.g., `phone_no REGEXP '^[0-9]{10}$'`, `qty_sold > 0`) and `ENUM` types.
 
-### Functions
-- `fn_get_discount()` — Dynamically calculates applicable discount percentage
+### 4. Advanced Database Objects
+
+#### Stored Procedures & Functions
+- `sp_checkout()`: Handles the entire complex checkout flow (inventory deduction, cart iteration, discount calculation) atomically.
+- `sp_restock_product()`: Safely updates stock levels while automatically generating a detailed audit log entry.
+- `sp_register_customer()`: Registers a user with the 'customer' role.
+- `sp_analytics_report()`: Generates revenue reports by date range.
+- `fn_get_discount()`: Encapsulates the logic for determining the highest applicable discount dynamically.
+
+#### Triggers (Active Database Rules)
+- `trg_block_expired_product`: A `BEFORE INSERT` trigger preventing the sale of expired products.
+- `trg_low_stock_alert`: An `AFTER UPDATE` trigger that generates a system notification if stock dips below the `reorder_level`.
+- `trg_product_create_log`: Logs initial stock upon product creation.
+- `trg_expiry_warning`: Flags products nearing expiration.
+
+#### Views (Virtual Tables)
+- `vw_cashier_products`: Filters out inactive or expired products for a clean cashier UI.
+- `vw_product_sales_summary` & `vw_daily_summary`: Aggregates data for real-time dashboards.
+- `vw_highest_ticket_items`: Computes top revenue-generating items.
+- `vw_expiry_alerts`: Lists items expiring within 30 days.
+
+### 5. Indexing and Performance Tuning
+Secondary indexes were purposefully created to optimize query execution:
+- `idx_product_category` on `PRODUCT(category_id)`
+- `idx_orders_date` on `ORDERS(order_date)`
+- `idx_items_order` on `ORDER_ITEMS(order_id)`
 
 ---
 
@@ -148,15 +179,6 @@ smartstock/
 | Manage Users | ✅ | ❌ | ❌ | ❌ |
 | View Own Purchases | ❌ | ❌ | ❌ | ✅ |
 | Alerts/Notifications | ✅ | ✅ | ❌ | ❌ |
-
----
-
-## 🔒 ACID Compliance
-
-- **Atomicity**: `sp_checkout` uses `START TRANSACTION … COMMIT / ROLLBACK`
-- **Consistency**: CHECK constraints prevent negative stock/price; triggers enforce expiry rules
-- **Isolation**: Row-level `FOR UPDATE` locks prevent double-selling last item
-- **Durability**: MySQL InnoDB engine guarantees durability with WAL
 
 ---
 
@@ -209,14 +231,6 @@ JOIN ORDERS o ON oi.order_id = o.order_id
 WHERE o.status = 'completed'
 GROUP BY c.category_name ORDER BY revenue DESC;
 ```
-
----
-
-## 📝 Normalization
-
-- **1NF**: All attributes atomic (warning_label stores single value per product)
-- **2NF**: `unit_price` in ORDER_ITEMS — no partial dependencies on composite PK
-- **3NF**: `category_name` moved to CATEGORY table, removing transitive dependency `product_id → category_id → category_name`
 
 ---
 
