@@ -533,9 +533,9 @@ INSERT IGNORE INTO CATEGORY (category_name, description) VALUES
 
 -- Users: Admin/Owner (4)
 INSERT IGNORE INTO USER (username, password, role, full_name, phone_no, email) VALUES
-('admin_ishant',  'admin@123',   'admin',   'Ishant Mehndiratta',   '9876543210', 'ishant@smartstock.in'),
-('admin_satyam',  'admin@123',   'admin',   'Satyam Tiwari',        '9876543211', 'satyam@smartstock.in'),
-('admin_anshaj',  'admin@123',   'admin',   'Anshaj Kumar',         '9876543212', 'anshaj@smartstock.in'),
+('admin_ishant',  'admin@123',   'admin',   'Ishant Mehndiratta',   '9876543210', 'imehndiratta_be24@thapar.edu'),
+('admin_satyam',  'admin@123',   'admin',   'Satyam Tiwari',        '9876543211', 'stiwari1_be24@thapar.edu'),
+('admin_anshaj',  'admin@123',   'admin',   'Anshaj',               '9876543212', 'aanshaj_be24@thapar.edu'),
 ('admin_root',    'root@1234',   'admin',   'Super Admin',          '9876543213', 'root@smartstock.in');
 
 -- Users: Store Manager (4)
