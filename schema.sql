@@ -1,17 +1,16 @@
--- ============================================================
--- SMART-STOCK: INTEGRATED INVENTORY & BILLING SOLUTION
+
 -- MySQL Backend Schema
 -- Authors: Ishant Mehndiratta, Satyam Tiwari, Anshaj
 -- TIET Patiala | UCS310 DBMS Project | 2025-26
--- ============================================================
+
 
 -- Create & select database
 CREATE DATABASE IF NOT EXISTS smartstock CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE smartstock;
 
--- ============================================================
+
 -- TABLE DEFINITIONS (DDL)
--- ============================================================
+
 
 -- CATEGORY Table
 CREATE TABLE IF NOT EXISTS CATEGORY (
@@ -125,9 +124,9 @@ CREATE TABLE IF NOT EXISTS NOTIFICATION (
     CONSTRAINT fk_notif_product FOREIGN KEY (product_id) REFERENCES PRODUCT(product_id)
 );
 
--- ============================================================
--- INDEXES for performance (idempotent — ignores duplicates)
--- ============================================================
+
+-- INDEXES for performance 
+
 DROP PROCEDURE IF EXISTS _add_indexes;
 DELIMITER //
 CREATE PROCEDURE _add_indexes()
@@ -149,9 +148,9 @@ CALL _add_indexes();
 DROP PROCEDURE IF EXISTS _add_indexes;
 
 
--- ============================================================
+
 -- VIEWS
--- ============================================================
+
 
 -- Cashier View: Only active, non-expired products with stock > 0
 CREATE OR REPLACE VIEW vw_cashier_products AS
@@ -249,9 +248,9 @@ JOIN USER u  ON o.customer_id = u.user_id
 JOIN USER cu ON o.cashier_id  = cu.user_id;
 
 
--- ============================================================
+
 -- STORED PROCEDURES
--- ============================================================
+
 
 DROP PROCEDURE IF EXISTS sp_checkout;
 DROP PROCEDURE IF EXISTS sp_restock_product;
@@ -447,9 +446,9 @@ END$$
 DELIMITER ;
 
 
--- ============================================================
+
 -- TRIGGERS
--- ============================================================
+
 
 DROP TRIGGER IF EXISTS trg_block_expired_product;
 DROP TRIGGER IF EXISTS trg_low_stock_alert;
@@ -517,10 +516,10 @@ END$$
 DELIMITER ;
 
 
--- ============================================================
+
 -- SEED DATA: Sample roles (4 per role as requested)
 -- Passwords are plain for dev; hash with bcrypt in production
--- ============================================================
+
 
 -- Categories
 INSERT IGNORE INTO CATEGORY (category_name, description) VALUES
@@ -565,9 +564,9 @@ INSERT IGNORE INTO DISCOUNT_RULES (rule_name, min_qty, min_amount, discount_pct)
 ('Big Spender (₹500+)',   1,  500,   10.00),
 ('Mega Spender (₹1000+)', 1, 1000,  15.00);
 
--- ============================================================
--- USEFUL ANALYTICAL QUERIES (saved as reference)
--- ============================================================
+
+-- USEFUL ANALYTICAL QUERIES (NOT IMPLEMENTED IN WEBSITE)
+
 
 -- Highest Ticket Item (by revenue)
 -- SELECT name, total_revenue FROM vw_highest_ticket_items LIMIT 10;
