@@ -230,7 +230,8 @@ function renderBill() {
 
 function updateBillTotals() {
   const subtotal = State.cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const discount = parseFloat(document.getElementById('bill-discount')?.value) || 0;
+  const discountRaw = document.getElementById('bill-discount')?.value.trim();
+  const discount = (discountRaw === '' || discountRaw === '0') ? null : parseFloat(discountRaw);
   const taxable  = Math.max(0, subtotal - discount);
   const tax      = taxable * 0.18;
   const total    = taxable + tax;
@@ -333,6 +334,7 @@ async function doCheckout() {
       })
     });
 
+    btn.innerHTML = '✓ Checkout'; btn.disabled = false;
     showToast(`Bill #${data.order_id} created! Total: ${fmtRs(data.total)}`, 'success');
     showReceipt(data.order_id);
     State.cart = [];

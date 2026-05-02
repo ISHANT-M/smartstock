@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname)));
 const pool = mysql.createPool({
   host:     process.env.DB_HOST     || 'localhost',
   user:     process.env.DB_USER     || 'root',
-  password: process.env.DB_PASS     || '',
+  password: process.env.DB_PASS     || 'arunehaditishant',
   database: process.env.DB_NAME     || 'smartstock',
   waitForConnections: true,
   connectionLimit:    10,
@@ -226,7 +226,21 @@ app.post('/api/orders', authMiddleware(['cashier','admin','manager']), async (re
       lineItems.push({ product_id: item.product_id, qty: item.qty, price: p.price, line });
     }
 
-    const discAmt  = parseFloat(discount_amount) || 0;
+    let discAmt = parseFloat(discount_amount);
+
+    // If no manual discount provided, auto-apply best discount from DISCOUNT_RULES
+  if (isNaN(discAmt) || discount_amount === undefined || discount_amount === null || discount_amount === '' || discount_amount == 0) {
+   const totalQty = items.reduce((sum, i) => sum + i.qty, 0);
+   const [[discRow]] = await conn.query(
+    'SELECT fn_get_discount(?, ?) AS best_pct', [totalQty, subtotal]
+  );
+    const bestPct = parseFloat(discRow.best_pct) || 0;
+    discAmt = parseFloat((subtotal * bestPct / 100).toFixed(2));
+  }  else {
+    discAmt = parseFloat(discAmt) || 0;
+  }
+
+
     const taxAmt   = parseFloat(((subtotal - discAmt) * 0.18).toFixed(2));
     const totalBill = parseFloat((subtotal - discAmt + taxAmt).toFixed(2));
 
@@ -247,7 +261,7 @@ app.post('/api/orders', authMiddleware(['cashier','admin','manager']), async (re
     }
 
     await conn.commit(); conn.release();
-    ok(res, { order_id: orderId, subtotal, discount: discAmt, tax: taxAmt, total: totalBill });
+    ok(res, { order_id: orderId, subtotal, discount: discAmt, tax: taxAmt, total: totalBill, auto_discount: discount_amount == null || discount_amount === '' });
   } catch (e) {
     await conn.rollback(); conn.release();
     err(res, e.message, 500);
