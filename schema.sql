@@ -430,7 +430,7 @@ CREATE FUNCTION fn_get_discount(
     p_qty    INT,
     p_amount DECIMAL(10,2)
 ) RETURNS DECIMAL(10,2)
-
+READS SQL DATA
 BEGIN
     DECLARE v_discount DECIMAL(10,2) DEFAULT 0;
     SELECT COALESCE(MAX(discount_pct), 0)
