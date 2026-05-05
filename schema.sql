@@ -1,7 +1,8 @@
+-- Active: 1777735997222@@trolley.proxy.rlwy.net@18017@smartstock
 
 -- MySQL Backend Schema
 -- Authors: Ishant Mehndiratta, Satyam Tiwari, Anshaj
--- TIET Patiala | UCS310 DBMS Project | 2025-26
+
 
 
 -- Create & select database
@@ -429,7 +430,7 @@ CREATE FUNCTION fn_get_discount(
     p_qty    INT,
     p_amount DECIMAL(10,2)
 ) RETURNS DECIMAL(10,2)
-DETERMINISTIC
+
 BEGIN
     DECLARE v_discount DECIMAL(10,2) DEFAULT 0;
     SELECT COALESCE(MAX(discount_pct), 0)
